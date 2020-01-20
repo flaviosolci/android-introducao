@@ -1,4 +1,4 @@
-package br.com.alura.ui.activity;
+package br.com.alura.agenda.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,24 +6,25 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import br.com.alura.R;
-import br.com.alura.dao.AlunoDao;
-import br.com.alura.model.Aluno;
+import br.com.alura.agenda.R;
+import br.com.alura.agenda.dao.AlunoDao;
+import br.com.alura.agenda.model.Aluno;
+import br.com.alura.agenda.ui.adapter.ListaAlunosAdapter;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
-    public static final String TITLE_APP_BAR = "Lista de alunos";
-    private AlunoDao dao = new AlunoDao();
-    private ArrayAdapter<Aluno> adapter;
+    private static final String TITLE_APP_BAR = "Lista de alunos";
+    private final AlunoDao dao = new AlunoDao();
+    private ListaAlunosAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,10 +32,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_alunos);
         setTitle(TITLE_APP_BAR);
 
-        alunosDefault();
         cofiguraFABNovoAluno();
         configuraLista();
-
     }
 
     @Override
@@ -46,22 +45,34 @@ public class ListaAlunosActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.activity_lista_alunos_menu_remover) {
-            AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            remover(adapter.getItem(menuInfo.position));
+            confirmaRemocao(item);
+
         }
         return super.onContextItemSelected(item);
 
     }
 
+    private void confirmaRemocao(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        new AlertDialog.Builder(this)
+                .setTitle("Removendo aluno")
+                .setMessage("Tem certeza que deseja remover o aluno?")
+                .setPositiveButton("Sim", (dialog, which) -> remover(adapter.getItem(menuInfo.position)))
+                .setNegativeButton("Não", null)
+                .show();
+    }
 
     private void configuraLista() {
         ListView listDeAlunos = findViewById(R.id.activity_lista_de_alunos_listview);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        listDeAlunos.setAdapter(adapter);
+        configurarAdapter(listDeAlunos);
         listDeAlunos.setOnItemClickListener((parent, view, position, id) -> configurarClickItem(parent, position));
         registerForContextMenu(listDeAlunos);
     }
 
+    private void configurarAdapter(ListView listDeAlunos) {
+        adapter = new ListaAlunosAdapter(this, dao.todos());
+        listDeAlunos.setAdapter(adapter);
+    }
 
     private void configurarClickItem(AdapterView<?> parent, int position) {
         Aluno aluno = (Aluno) parent.getItemAtPosition(position);
@@ -84,10 +95,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
         startActivity(new Intent(ListaAlunosActivity.this, FormularioAlunoActivity.class));
     }
 
-    private void alunosDefault() {
-        dao.salvar(new Aluno("Flavio", "12356", "flavio@flavio.coom"));
-        dao.salvar(new Aluno("Flavio Solci", "12356", "flaviosolci@flavio.coom"));
-    }
 
     private void remover(Aluno selecionado) {
         adapter.remove(selecionado);
@@ -101,7 +108,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
     }
 
     private void atualizaLista() {
-        adapter.clear();
-        adapter.addAll(dao.todos());
+        adapter.atualizar(dao.todos());
     }
 }

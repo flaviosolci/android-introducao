@@ -1,18 +1,16 @@
-package br.com.alura.ui.activity;
+package br.com.alura.agenda.ui.activity;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import br.com.alura.R;
-import br.com.alura.dao.AlunoDao;
-import br.com.alura.model.Aluno;
+import br.com.alura.agenda.R;
+import br.com.alura.agenda.dao.AlunoDao;
+import br.com.alura.agenda.model.Aluno;
 
 public class FormularioAlunoActivity extends AppCompatActivity {
 
@@ -22,7 +20,7 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private EditText campoNome;
     private EditText campoTelefone;
     private EditText campoEmail;
-    private AlunoDao dao = new AlunoDao();
+    private final AlunoDao dao = new AlunoDao();
     private Aluno aluno;
 
     @Override

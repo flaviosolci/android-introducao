@@ -1,4 +1,4 @@
-package br.com.alura.model;
+package br.com.alura.agenda.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -22,7 +22,7 @@ public class Aluno implements Parcelable {
         this.email = email;
     }
 
-    protected Aluno(Parcel in) {
+    private Aluno(Parcel in) {
         nome = in.readString();
         telefone = in.readString();
         email = in.readString();
@@ -84,10 +84,6 @@ public class Aluno implements Parcelable {
             return new Aluno[size];
         }
     };
-
-    public String getId() {
-        return id;
-    }
 
     public void setId(String id) {
         this.id = id;

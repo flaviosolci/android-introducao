@@ -1,10 +1,10 @@
-package br.com.alura.dao;
+package br.com.alura.agenda.dao;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.alura.model.Aluno;
+import br.com.alura.agenda.model.Aluno;
 
 public class AlunoDao {
     private static final List<Aluno> alunos = new ArrayList<>();
